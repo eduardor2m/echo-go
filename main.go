@@ -1,14 +1,16 @@
 package main
 
 import (
+	"github.com/eduardor2m/echo-go/database"
 	"github.com/eduardor2m/echo-go/routes"
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
-  e := echo.New()
+	e := echo.New()
+	database.InitDB()
 
-  routes.UserRoute(e)
+	routes.Route(e)
 
-  e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":1323"))
 }
