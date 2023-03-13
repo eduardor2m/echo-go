@@ -10,7 +10,6 @@ type User struct {
 	Name     string `json:"name" valid:"notnull" gorm:"type:varchar(255)"`
 	Email    string `json:"email" valid:"notnull,email" gorm:"type:varchar(255),unique_index"`
 	Password string `json:"-" valid:"notnull" gorm:"type:varchar(255)"`
-	// Token    string `json:"token" gorm:"type:uuid,unique_index"`
 }
 
 func NewUser(name, email, password string) (*User, error) {
@@ -45,8 +44,7 @@ func (u *User) Prepare() error {
 
 	u.Password = string(password)
 
-	// token := uuid.NewV4().String()
-	// u.Token = token
+	u.Validate()
 
 	return nil
 
