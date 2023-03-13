@@ -20,18 +20,42 @@ func (u *UserUseCase) Create(user *domain.User) (*domain.User, error) {
 	return user, nil
 }
 
-// func (u *UserUseCase) Auth(email string, password string) (*domain.User, error) {
+func (u *UserUseCase) Get(id string) (*domain.User, error) {
+	user, err := u.UserRepository.Get(id)
 
-// 	user, err := u.UserRepository.Find(email)
+	if err != nil {
+		return user, err
+	}
 
-// 	if err != nil {
-// 		return nil, fmt.Errorf("The password is invalid for the user: %v", email)
-// 	}
+	return user, nil
+}
 
-// 	if user.IsCorrectPassword(password) {
-// 		return user, nil
-// 	}
+func (u *UserUseCase) GetAll() ([]domain.User, error) {
+	users, err := u.UserRepository.GetAll()
 
-// 	return nil, fmt.Errorf("The password is invalid for the user: %v", email)
+	if err != nil {
+		return users, err
+	}
 
-// }
+	return users, nil
+}
+
+func (u *UserUseCase) Update(user *domain.User) (*domain.User, error) {
+	user, err := u.UserRepository.Update(user)
+
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (u *UserUseCase) Delete(id string) error {
+	err := u.UserRepository.Delete(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
