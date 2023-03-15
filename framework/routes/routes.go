@@ -10,10 +10,10 @@ import (
 func UserRoutes(e *echo.Echo) {
 	e.GET("/:name", WelcomeRoute)
 	e.POST("/users", controllers.CreateUser)
-	e.GET("/users/:id", controllers.GetUser)
+	e.GET("/users/:email", controllers.GetUser)
 	e.GET("/users", controllers.GetUsers)
-	e.PUT("/users/:id", controllers.UpdateUser)
-	e.DELETE("/users/:id", controllers.DeleteUser)
+	e.PUT("/users", controllers.UpdateUser)
+	e.DELETE("/users/:email", controllers.DeleteUser)
 }
 
 func WelcomeRoute(c echo.Context) error {

@@ -17,16 +17,11 @@ import (
 func TestCreateUser(t *testing.T) {
 	e := echo.New()
 
-	reqBody := map[string]string{
-		"name":     "Eduardo",
-		"email":    "eduardo@gmail.com",
-		"password": "123456",
+	reqBody := &domain.User{
+		Name:     "Eduardo",
+		Email:    "eduardo@gmail.com",
+		Password: "123456",
 	}
-
-	defer func() {
-		db := utils.ConnectDb()
-		db.Exec("DROP DATABASE users")
-	}()
 
 	reqJSON, _ := json.Marshal(reqBody)
 
@@ -46,6 +41,73 @@ func TestCreateUser(t *testing.T) {
 			assert.Equal(t, "eduardo@gmail.com", user.Email)
 		}
 
+	}
+
+	defer utils.ConnectDb().Delete(&domain.User{}, "email = ?", reqBody.Email)
+
+}
+
+func TestListAllUsers(t *testing.T) {
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/users", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, controllers.GetUsers(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+	}
+
+}
+
+func TestGetUser(t *testing.T) {
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodGet, "/users/2", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, controllers.GetUser(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+	}
+
+}
+
+func TestUpdateUser(t *testing.T) {
+	e := echo.New()
+
+	reqBody := &domain.User{
+		Name:     "Eduardo Update",
+		Email:    "eduardoupdate@gmail.com",
+		Password: "123456",
+	}
+
+	reqJSON, _ := json.Marshal(reqBody)
+
+	req := httptest.NewRequest(http.MethodPut, "/users/2", bytes.NewBuffer(reqJSON))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, controllers.UpdateUser(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+	}
+
+}
+
+func TestDeleteUser(t *testing.T) {
+	e := echo.New()
+
+	req := httptest.NewRequest(http.MethodDelete, "/users/2", nil)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, controllers.DeleteUser(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
 	}
 
 }

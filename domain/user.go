@@ -8,7 +8,7 @@ import (
 type User struct {
 	Base
 	Name     string `json:"name" valid:"notnull" gorm:"type:varchar(255)"`
-	Email    string `json:"email" valid:"notnull,email" gorm:"type:varchar(255),unique_index"`
+	Email    string `json:"email" valid:"notnull,email" gorm:"type:varchar(255),uniqueIndex"`
 	Password string `json:"-" valid:"notnull" gorm:"type:varchar(255)"`
 }
 
@@ -52,5 +52,6 @@ func (u *User) Prepare() error {
 
 func (u *User) Validate() error {
 	_, err := govalidator.ValidateStruct(u)
+
 	return err
 }

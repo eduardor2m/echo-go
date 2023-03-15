@@ -1,16 +1,18 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/eduardor2m/echo-go/domain"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	Insert(user *domain.User) (*domain.User, error)
-	Get(id string) (*domain.User, error)
+	Get(email string) (*domain.User, error)
 	GetAll() ([]domain.User, error)
 	Update(user *domain.User) (*domain.User, error)
-	Delete(id string) error
+	Delete(email string) error
 }
 
 type UserRepositoryDB struct {
@@ -30,6 +32,10 @@ func (repo UserRepositoryDB) Insert(user *domain.User) (*domain.User, error) {
 		return nil, err
 	}
 
+	if err := repo.Db.Where("email = ?", user.Email).First(&user).Error; err == nil {
+		return nil, errors.New("email already exists")
+	}
+
 	err = repo.Db.Create(user).Error
 
 	if err != nil {
@@ -39,10 +45,10 @@ func (repo UserRepositoryDB) Insert(user *domain.User) (*domain.User, error) {
 	return user, nil
 }
 
-func (repo UserRepositoryDB) Get(id string) (*domain.User, error) {
+func (repo UserRepositoryDB) Get(email string) (*domain.User, error) {
 	var user domain.User
 
-	err := repo.Db.First(&user, id).Error
+	err := repo.Db.First(&user, "email = ?", email).Error
 
 	if err != nil {
 		return nil, err
@@ -64,7 +70,7 @@ func (repo UserRepositoryDB) GetAll() ([]domain.User, error) {
 }
 
 func (repo UserRepositoryDB) Update(user *domain.User) (*domain.User, error) {
-	err := repo.Db.Save(user).Error
+	err := repo.Db.Model(&user).Where("email = ?", user.Email).Updates(user).Error
 
 	if err != nil {
 		return nil, err
@@ -73,8 +79,8 @@ func (repo UserRepositoryDB) Update(user *domain.User) (*domain.User, error) {
 	return user, nil
 }
 
-func (repo UserRepositoryDB) Delete(id string) error {
-	err := repo.Db.Delete(&domain.User{}, id).Error
+func (repo UserRepositoryDB) Delete(email string) error {
+	err := repo.Db.Delete(&domain.User{}, "email = ?", email).Error
 
 	if err != nil {
 		return err

@@ -36,9 +36,9 @@ func GetUser(c echo.Context) error {
 	userRepo := repositories.UserRepositoryDB{Db: db}
 	useUseCase := usecases.UserUseCase{UserRepository: userRepo}
 
-	id := c.Param("id")
+	email := c.Param("email")
 
-	user, err := useUseCase.Get(id)
+	user, err := useUseCase.Get(email)
 
 	if err != nil {
 		return err
@@ -87,9 +87,9 @@ func DeleteUser(c echo.Context) error {
 	userRepo := repositories.UserRepositoryDB{Db: db}
 	useUseCase := usecases.UserUseCase{UserRepository: userRepo}
 
-	id := c.Param("id")
+	email := c.Param("email")
 
-	err := useUseCase.Delete(id)
+	err := useUseCase.Delete(email)
 
 	if err != nil {
 		return err
